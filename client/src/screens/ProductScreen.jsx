@@ -1,10 +1,18 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { products } from '../data/products'
+import axios from 'axios'
 
 export default function ProductScreen() {
+    const [product, setProduct] = useState({})
     const { id } = useParams()
-    const product = products.find(product => product.id == id)
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            const { data } = await axios.get(`/api/products/${id}`)
+            setProduct(data)
+        }
+        fetchProduct()
+    }, [id])
 
     return (
         <div className="container mx-auto mt-8 p-4">
@@ -22,7 +30,7 @@ export default function ProductScreen() {
                         <span className="text-yellow-500 mr-1">{product.rating}</span>
                         <span className="text-gray-500">({product.numReviews} reviews)</span>
                     </div>
-                    <p className="text-gray-700 mt-2">${product.price.toFixed(2)}</p>
+                    <p className="text-gray-700 mt-2">${product?.price?.toFixed(2)}</p>
                     <p className="text-gray-700 mt-2">In Stock: {product.countInStock}</p>
                     <div className="mt-4">
                         <label htmlFor="quantity" className="text-gray-700">Quantity:</label>
