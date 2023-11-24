@@ -1,25 +1,21 @@
-import React, { useEffect, useState } from 'react'
 import Product from '../components/Product'
-import axios from 'axios'
+import { useGetProductsQuery } from '../slices/productsApiSlice'
 
 export default function HomeScreen() {
-    const [products, setProducts] = useState([])
+    const { data: products, isLoading, error } = useGetProductsQuery()
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            const { data } = await axios.get('/api/products')
-            setProducts(data)
-        }
-        fetchProducts()
-    }, [])
-    console.log(products)
     return (
-        <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4'>
-            {
-                products?.map((product, i) => (
-                    <Product key={i} product={product} />
-                ))
+        <>
+            {isLoading ? (<h1>Loading...</h1 >) : error ? (<div> {error?.data?.message || error?.error} </div>) : (
+                <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4'>
+                    {
+                        products?.map((product, i) => (
+                            <Product key={i} product={product} />
+                        ))
+                    }
+                </div>
+            )
             }
-        </div>
+        </>
     )
 }
