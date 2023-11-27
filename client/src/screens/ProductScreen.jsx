@@ -1,16 +1,32 @@
 import { Link, useParams } from 'react-router-dom'
 import { useGetProductDetailsQuery } from '../slices/productsApiSlice'
+import Spinner from '../components/Spinner'
+import { toast } from 'react-toastify'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { addToCart } from '../slices/cartSlice'
 
 export default function ProductScreen() {
     const { id: productId } = useParams()
+    const [qty, setQty] = useState(1)
+
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const { data: product, isLoading, error } = useGetProductDetailsQuery(productId)
+
+    const addtoCartHandler = () => {
+        dispatch(addToCart({ ...product, qty }))
+        //navigate('/cart')
+    }
+
     return (
         <div className="container mx-auto mt-8 p-4">
             <Link to={'/'}>
                 <button className="bg-gray-800 text-white px-4 py-2 rounded-md mb-4">Go Back</button>
             </Link>
-            {isLoading ? (<h1>Loading...</h1>) : error ? (<div> {error?.data?.message || error?.error} </div>) : (
+            {isLoading ? (<Spinner />) : error ? toast.error(error?.data?.message || error?.error) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="md:col-span-1">
                         <img src={product.image} alt={product.name} className="w-full h-auto" />
@@ -29,6 +45,7 @@ export default function ProductScreen() {
                             <select
                                 id="quantity"
                                 className="bg-white border border-gray-300 p-2 rounded-md mt-2"
+                                onChange={e => setQty(e.target.value)}
                             >
                                 {[...Array(product.countInStock).keys()].map(num => (
                                     <option key={num + 1} value={num + 1}>
@@ -39,6 +56,7 @@ export default function ProductScreen() {
                         </div>
                         <button
                             className="bg-yellow-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-yellow-600"
+                            onClick={addtoCartHandler}
                         >
                             Add to Cart
                         </button>

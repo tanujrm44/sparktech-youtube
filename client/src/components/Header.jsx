@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FiShoppingCart, FiUser, FiLogOut } from 'react-icons/fi'
+import { useSelector } from 'react-redux'
 
 const Header = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+
+    const { cartItems } = useSelector(state => state.cart)
 
     return (
         <nav className="bg-gray-800 p-4">
@@ -26,7 +29,9 @@ const Header = () => {
                     <Link to="/cart" className="text-white flex items-center">
                         <FiShoppingCart className="mr-1" />
                         Cart
+                        <span className='bg-blue-500 text-white rounded-full px-2 py-1 ml-2'>{cartItems.length}</span>
                     </Link>
+
                     <div className="relative group">
                         <button
                             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -78,6 +83,7 @@ const Header = () => {
                         <Link to="/cart" className="text-white flex items-center">
                             <FiShoppingCart className="mr-1" />
                             Cart
+                            <span className='bg-blue-500 text-white rounded-full px-2 py-1 ml-2'>{cartItems.length}</span>
                         </Link>
                         <div className="relative group ">
                             <button
