@@ -48,4 +48,33 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 })
 
-export { loginUser, registerUser }
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.body._id)
+
+  if (user) {
+    user.name = req.body.name || user.name
+    user.email = req.body.email || user.email
+    if (req.body.password) user.password = req.body.password
+    await user.save()
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    })
+  } else {
+    res.status(404)
+    throw new Error("User Not Found")
+  }
+})
+
+const logoutUser = asyncHandler(async (req, res) => {
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expires: new Date(0),
+  })
+  res.status(200).json({
+    message: "Logged Out Successfully",
+  })
+})
+
+export { loginUser, registerUser, updateUserProfile, logoutUser }
