@@ -4,9 +4,11 @@ import { USERS_URL } from "../constants"
 export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     login: builder.mutation({
-      url: `${USERS_URL}/login`,
-      model: "POST",
-      body: data,
+      query: data => ({
+        url: `${USERS_URL}/login`,
+        method: "POST",
+        body: data,
+      }),
     }),
   }),
 })
