@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { setCredentials } from '../slices/userSlice'
 import { toast } from 'react-toastify'
 import Spinner from '../components/Spinner'
+import { useForgotPasswordMutation } from "../slices/userApiSlice"
 
 export default function LoginScreen() {
     const dispatch = useDispatch()
@@ -14,6 +15,7 @@ export default function LoginScreen() {
     const [password, setPassword] = useState("")
 
     const [login, { isLoading }] = useLoginMutation()
+    const [forgotPassword, { isLoading: isLoadingPassword }] = useForgotPasswordMutation()
 
     const handleLogin = async e => {
         e.preventDefault()
@@ -23,7 +25,19 @@ export default function LoginScreen() {
             navigate("/")
             toast.success("Login Successful")
         } catch (error) {
-            toast.error(error?.data?.message || error?.message)
+            toast.error(error?.data?.message || error?.error)
+        }
+    }
+
+    const handleForgotPassword = async () => {
+        if (!email) alert("Please enter your email")
+        else {
+            try {
+                const res = await forgotPassword({ email }).unwrap()
+                toast.success(res.message)
+            } catch (err) {
+                toast.error(err?.data?.message || err.error)
+            }
         }
     }
 
@@ -53,10 +67,11 @@ export default function LoginScreen() {
                 </div>
                 <p className="mt-1">
                     Forgot Password?{' '}
-                    <span className="text-blue-500 cursor-pointer">
+                    <span className="text-blue-500 cursor-pointer" onClick={handleForgotPassword}>
                         Click here
                     </span>
                 </p>
+                {isLoadingPassword && <Spinner />}
                 <button
                     type='submit'
                     className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-blue-600"
