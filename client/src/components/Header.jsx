@@ -1,30 +1,30 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FiShoppingCart, FiUser, FiLogOut, FiLogIn } from 'react-icons/fi'
-import { FaCaretUp, FaCaretDown } from 'react-icons/fa'
 import { useSelector, useDispatch } from 'react-redux'
+import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
+import { toast } from "react-toastify"
 import { useLogoutMutation } from '../slices/userApiSlice'
 import { logout } from '../slices/userSlice'
-import { toast } from "react-toastify"
 
 const Header = () => {
-    const dispatch = useDispatch()
     const navigate = useNavigate()
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+    const dispatch = useDispatch()
 
     const [logoutApi] = useLogoutMutation()
 
-    const { cartItems } = useSelector(state => state.cart)
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
 
+    const { cartItems } = useSelector(state => state.cart)
     const { userInfo } = useSelector(state => state.user)
 
-    const logoutHandler = async () => {
+    const handleLogout = async () => {
         try {
             await logoutApi().unwrap()
             dispatch(logout())
             navigate("/login")
-            toast.success("Logged Out Succesfully")
+            toast.success("logged Out Successfully")
         } catch (error) {
             toast.error(error?.data?.message || error?.error)
         }
@@ -52,7 +52,7 @@ const Header = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/logout" onClick={logoutHandler}>
+                        <Link to="/logout" onClick={handleLogout}>
                             <FiLogOut className="mr-1" />
                             Logout
                         </Link>
@@ -92,10 +92,9 @@ const Header = () => {
                         <span className='bg-blue-500 text-white rounded-full px-2 py-1 ml-2'>{cartItems.length}</span>
                     </Link>
 
-                    {userInfo &&
-                        <div className="relative group">
-                            {renderProfileButton()}
-                        </div>}
+                    {userInfo && <div className="relative group">
+                        {renderProfileButton()}
+                    </div>}
                     {!userInfo && renderSignInButton()}
                 </div>
                 <div className="sm:hidden">
@@ -123,10 +122,9 @@ const Header = () => {
                             Cart
                             <span className='bg-blue-500 text-white rounded-full px-2 py-1 ml-2'>{cartItems.length}</span>
                         </Link>
-                        {userInfo &&
-                            <div className="relative group ">
-                                {renderProfileButton()}
-                            </div>}
+                        {userInfo && <div className="relative group ">
+                            {renderProfileButton()}
+                        </div>}
                         {!userInfo && renderSignInButton()}
                     </div>
                 </div>
