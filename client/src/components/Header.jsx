@@ -1,13 +1,73 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { FiShoppingCart, FiUser, FiLogOut } from 'react-icons/fi'
-import { useSelector } from 'react-redux'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { FiShoppingCart, FiUser, FiLogOut, FiLogIn } from 'react-icons/fi'
+import { FaCaretUp, FaCaretDown } from 'react-icons/fa'
+import { useSelector, useDispatch } from 'react-redux'
+import { useLogoutMutation } from '../slices/userApiSlice'
+import { logout } from '../slices/userSlice'
+import { toast } from "react-toastify"
 
 const Header = () => {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
 
+    const [logoutApi] = useLogoutMutation()
+
     const { cartItems } = useSelector(state => state.cart)
+
+    const { userInfo } = useSelector(state => state.user)
+
+    const logoutHandler = async () => {
+        try {
+            await logoutApi().unwrap()
+            dispatch(logout())
+            navigate("/login")
+            toast.success("Logged Out Succesfully")
+        } catch (error) {
+            toast.error(error?.data?.message || error?.error)
+        }
+    }
+
+    const renderProfileButton = () => {
+        return (
+            <>
+                <button
+                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                    className="text-white flex items-center"
+                >
+                    <FiUser className="mr-1" />
+                    {userInfo?.name}
+                    {isProfileMenuOpen ? <FaCaretUp /> : <FaCaretDown />}
+                </button>
+                <ul
+                    className={`absolute ${isProfileMenuOpen ? 'block' : 'hidden'
+                        } bg-gray-800 p-2 mt-2 space-y-2 text-white border rounded-md`}
+                >
+                    <li>
+                        <Link to="/profile">
+                            <FiUser className="mr-1" />
+                            Profile
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/logout" onClick={logoutHandler}>
+                            <FiLogOut className="mr-1" />
+                            Logout
+                        </Link>
+                    </li>
+                </ul>
+            </>
+        )
+    }
+
+    const renderSignInButton = () => (
+        <Link className='flex items-center' to="/login">
+            <FiLogIn className="mr-1 text-white" />
+            <button className="text-white">Sign In</button>
+        </Link>
+    )
 
     return (
         <nav className="bg-gray-800 p-4">
@@ -32,33 +92,11 @@ const Header = () => {
                         <span className='bg-blue-500 text-white rounded-full px-2 py-1 ml-2'>{cartItems.length}</span>
                     </Link>
 
-                    <div className="relative group">
-                        <button
-                            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                            className="text-white flex items-center"
-                        >
-                            <FiUser className="mr-1" />
-                            Profile
-                        </button>
-                        <ul
-                            className={`absolute ${isProfileMenuOpen ? 'block' : 'hidden'
-                                } bg-gray-800 p-2 mt-2 space-y-2 text-white`}
-                        >
-                            <li>
-                                <Link to="/profile">
-                                    <FiUser className="mr-1" />
-                                    Profile
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/logout">
-                                    <FiLogOut className="mr-1" />
-                                    Logout
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                    <button className="text-white">Sign In</button>
+                    {userInfo &&
+                        <div className="relative group">
+                            {renderProfileButton()}
+                        </div>}
+                    {!userInfo && renderSignInButton()}
                 </div>
                 <div className="sm:hidden">
                     <button
@@ -85,33 +123,11 @@ const Header = () => {
                             Cart
                             <span className='bg-blue-500 text-white rounded-full px-2 py-1 ml-2'>{cartItems.length}</span>
                         </Link>
-                        <div className="relative group ">
-                            <button
-                                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                                className="text-white flex items-center"
-                            >
-                                <FiUser className="mr-1" />
-                                Profile
-                            </button>
-                            <ul
-                                className={`absolute ${isProfileMenuOpen ? 'block' : 'hidden'
-                                    } bg-gray-800 p-2 mt-2 space-y-2 text-white`}
-                            >
-                                <li>
-                                    <Link to="/profile">
-                                        <FiUser className="mr-1" />
-                                        Profile
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link to="/logout">
-                                        <FiLogOut className="mr-1" />
-                                        Logout
-                                    </Link>
-                                </li>
-                            </ul>
-                        </div>
-                        <button className="text-white">Sign In</button>
+                        {userInfo &&
+                            <div className="relative group ">
+                                {renderProfileButton()}
+                            </div>}
+                        {!userInfo && renderSignInButton()}
                     </div>
                 </div>
             )}
