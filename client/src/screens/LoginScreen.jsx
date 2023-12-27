@@ -1,18 +1,30 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useLoginMutation } from '../slices/userApiSlice'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setCredentials } from '../slices/userSlice'
 import { toast } from 'react-toastify'
 import Spinner from '../components/Spinner'
 import { useForgotPasswordMutation } from "../slices/userApiSlice"
+import { BACKEND_URL } from '../constants'
 
 export default function LoginScreen() {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const { userInfo } = useSelector(state => state.user)
+
+    const { search } = useLocation()
+    const sp = new URLSearchParams(search)
+    const redirect = sp.get("redirect") || "/"
+
+    useEffect(() => {
+        if (userInfo) {
+            navigate(redirect)
+        }
+    }, [navigate, redirect, userInfo])
 
     const [login, { isLoading }] = useLoginMutation()
     const [forgotPassword, { isLoading: isLoadingPassword }] = useForgotPasswordMutation()
@@ -38,6 +50,15 @@ export default function LoginScreen() {
             } catch (err) {
                 toast.error(err?.data?.message || err.error)
             }
+        }
+    }
+
+    const handleGoogleAuth = () => {
+        try {
+            window.location.href = `${BACKEND_URL}/auth/google/callback`
+        } catch (err) {
+            toast.error(err?.data?.message || err.error)
+
         }
     }
 
@@ -83,6 +104,7 @@ export default function LoginScreen() {
                 <button
                     type='button'
                     className="bg-red-600 text-white px-4 py-2 rounded-md mt-4 ml-3 hover:bg-red-700"
+                    onClick={handleGoogleAuth}
                 >
                     Sign in with Google
                 </button>

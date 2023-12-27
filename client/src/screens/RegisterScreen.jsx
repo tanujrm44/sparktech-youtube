@@ -33,6 +33,15 @@ export default function LoginScreen() {
         }
     }
 
+    const handleGoogleAuth = () => {
+        try {
+            window.location.href = `${BACKEND_URL}/auth/google/callback`
+        } catch (err) {
+            toast.error(err?.data?.message || err.error)
+
+        }
+    }
+
     return (
         <div className="container mx-auto mt-8 mb-28 p-4 max-w-md ">
             <h2 className="text-2xl font-semibold mb-4">Register</h2>
@@ -88,6 +97,7 @@ export default function LoginScreen() {
                 <button
                     type='button'
                     className="bg-red-600 text-white px-4 py-2 rounded-md mt-4 ml-3 hover:bg-red-700"
+                    onClick={handleGoogleAuth}
                 >
                     Sign up with Google
                 </button>

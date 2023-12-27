@@ -15,7 +15,7 @@ export default function CartScreen() {
     }
 
     const checkoutHandler = () => {
-        navigate("/checkout")
+        navigate("/login?redirect=/shipping")
     }
 
     return (
