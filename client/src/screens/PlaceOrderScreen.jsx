@@ -29,7 +29,7 @@ export default function PlaceOrderScreen() {
             }).unwrap()
             dispatch(clearCartItems())
             toast.success("Order Placed!")
-            //navigate(`/order/${res._id}`)
+            navigate(`/order/${res._id}`)
         } catch (err) {
             toast.error(err?.data?.message || err.error)
         }
