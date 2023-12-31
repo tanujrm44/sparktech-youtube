@@ -10,7 +10,7 @@ export default function PaymentScreen() {
 
     const handleContinue = () => {
         dispatch(savePaymentMethod(selectedPayment))
-        //navigate("/place-order")
+        navigate("/place-order")
     }
     return (
         <div className='mb-64'>
