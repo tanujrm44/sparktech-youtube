@@ -15,9 +15,11 @@ const Header = () => {
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+    const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false)
 
     const { cartItems } = useSelector(state => state.cart)
     const { userInfo } = useSelector(state => state.user)
+
 
     const handleLogout = async () => {
         try {
@@ -61,6 +63,40 @@ const Header = () => {
             </>
         )
     }
+    const renderAdminButton = () => {
+        return (
+            <>
+                <button
+                    onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                    className="text-white flex items-center"
+                >
+                    <FiUser className="mr-1" />
+                    Admin
+                    {isAdminMenuOpen ? <FaCaretUp /> : <FaCaretDown />}
+                </button>
+                <ul
+                    className={`absolute ${isAdminMenuOpen ? 'block' : 'hidden'
+                        } bg-gray-800 p-2 mt-2 space-y-2 text-white border rounded-md`}
+                >
+                    <li>
+                        <Link to="/admin/users">
+                            Users
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/admin/products">
+                            Products
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/admin/orders">
+                            Orders
+                        </Link>
+                    </li>
+                </ul>
+            </>
+        )
+    }
 
     const renderSignInButton = () => (
         <Link className='flex items-center' to="/login">
@@ -95,6 +131,9 @@ const Header = () => {
                     {userInfo && <div className="relative group">
                         {renderProfileButton()}
                     </div>}
+                    {userInfo?.isAdmin && <div className="relative group ">
+                        {renderAdminButton()}
+                    </div>}
                     {!userInfo && renderSignInButton()}
                 </div>
                 <div className="sm:hidden">
@@ -124,6 +163,9 @@ const Header = () => {
                         </Link>
                         {userInfo && <div className="relative group ">
                             {renderProfileButton()}
+                        </div>}
+                        {userInfo?.isAdmin && <div className="relative group ">
+                            {renderAdminButton()}
                         </div>}
                         {!userInfo && renderSignInButton()}
                     </div>
