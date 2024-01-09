@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 import Order from "../models/orderModel.js"
 import asyncHandler from "express-async-handler"
 
@@ -49,4 +50,12 @@ const getOrderById = asyncHandler(async (req, res) => {
   }
 })
 
-export { addOrderItems, getOrderById }
+const getUserOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({ user: req.user._id }).populate(
+    "user",
+    "id name"
+  )
+  res.json(orders)
+})
+
+export { addOrderItems, getOrderById, getUserOrders }

@@ -17,11 +17,11 @@ const protect = asyncHandler(async (req, res, next) => {
     } catch (error) {
       console.error(error)
       res.status(401)
-      throw new Error("Not Authorized, token failed")
+      throw new Error("Not authorized, token failed")
     }
   } else {
     res.status(401)
-    throw new Error("Not Authorized, no token")
+    throw new Error("Not authorized, no token")
   }
 })
 
@@ -30,7 +30,7 @@ const admin = (req, res, next) => {
     next()
   } else {
     res.status(401)
-    throw new Error("Not Authorized as an admin")
+    throw new Error("Not authorized as an admin")
   }
 }
 

@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser"
 import passport from "./utils/passport.js"
 import authRoutes from "./routes/authRoutes.js"
 import orderRoutes from "./routes/orderRoutes.js"
+import stripe from "./utils/stripe.js"
 
 dotenv.config()
 
@@ -38,6 +39,8 @@ passport(app)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+stripe(app)
 
 app.get("/", (req, res) => {
   res.send("Api is running...")
