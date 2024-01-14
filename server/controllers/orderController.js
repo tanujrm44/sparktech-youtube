@@ -51,11 +51,27 @@ const getOrderById = asyncHandler(async (req, res) => {
 })
 
 const getUserOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find({ user: req.user._id }).populate(
-    "user",
-    "id name"
-  )
+  const orders = await Order.find({ user: req.user._id }).populate("user")
   res.json(orders)
 })
 
-export { addOrderItems, getOrderById, getUserOrders }
+const getOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find().populate("user", "id name")
+  res.send(orders)
+})
+
+const updateOrderToDelivered = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id)
+  if (order) {
+    order.isDelivered = true
+    order.deliveredAt = Date.now()
+
+    const updatedOrder = await order.save()
+
+    res.json(updatedOrder)
+  }
+  res.status(404)
+  throw new Error("Order Not Found")
+})
+
+export { addOrderItems, getOrderById, getUserOrders, getOrders, updateOrderToDelivered }

@@ -62,19 +62,29 @@ export default function PlaceOrderScreen() {
                     <tbody>
                         {cartItems.map(item => (
                             <tr key={item._id} className='border-b border-gray-400'>
-                                <th className="text-left">{item.name}</th>
-                                <th className="text-right">{item.qty}</th>
-                                <th className="text-right">{(item.price * item.qty).toFixed(2)}</th>
+                                <td className="text-left">{item.name}</td>
+                                <td className="text-right">{item.qty}</td>
+                                <td className="text-right">${(item.price * item.qty).toFixed(2)}</td>
                             </tr>
                         ))}
+                        <tr className="border-b border-gray-400">
+                            <td className="text-left font-semibold">Shipping</td>
+                            <td className="text-right"></td>
+                            <td className="text-right">${shippingPrice}</td>
+                        </tr>
+                        <tr className="border-b border-gray-400">
+                            <td className="text-left font-semibold">Tax</td>
+                            <td className="text-right"></td>
+                            <td className="text-right">${taxPrice}</td>
+                        </tr>
                     </tbody>
                 </table>
                 <div className="mt-4">
-                    <p className="text-right font-semibold">Total: {totalPrice}</p>
+                    <p className="text-right font-semibold">Total: ${totalPrice}</p>
                 </div>
                 <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded w-full mt-4" onClick={handlePlaceOrder}>Place Order</button>
                 {isLoading && <Spinner />}
             </div>
-        </div>
+        </div >
     )
 }

@@ -25,14 +25,14 @@ import OrderListScreen from './screens/admin/OrderListScreen.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path='/' element={<App />}>
+    <Route path='/' element={< App />}>
       <Route index={true} path='/' element={<HomeScreen />} />
       <Route path='/product/:id' element={<ProductScreen />} />
       <Route path='/cart' element={<CartScreen />} />
       <Route path='/login' element={<LoginScreen />} />
       <Route path='/register' element={<RegisterScreen />} />
       <Route path='/reset-password/:resetToken' element={<ResetPassword />} />
-      {/*private route*/}
+      {/*Private Routes*/}
       <Route path="" element={<PrivateRoute />} >
         <Route path='/payment' element={<PaymentScreen />} />
         <Route path='/shipping' element={<ShippingScreen />} />
