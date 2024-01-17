@@ -1,19 +1,6 @@
 import React from 'react'
-import { useGetProductsQuery } from '../../slices/productsApiSlice'
-import Spinner from '../../components/Spinner'
-import { toast } from 'react-toastify'
 
 export default function ProductListScreen() {
-    const { data: products, isLoading, error, refetch } = useGetProductsQuery()
-
-    if (isLoading) {
-        return <Spinner />
-    }
-
-    if (error) {
-        toast.error(error?.data?.message || error?.error)
-    }
-
     return (
         <div>
             <div className="flex items-center justify-between">
@@ -45,18 +32,6 @@ export default function ProductListScreen() {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {products?.map(product => (
-                        <tr key={product._id}>
-                            <td className='px-6 py-4 whitespace-nowrap'>{product._id}</td>
-                            <td className='px-6 py-4 whitespace-nowrap'>{product.name}</td>
-                            <td className='px-6 py-4 whitespace-nowrap'>${product.price}</td>
-                            <td className='px-6 py-4 whitespace-nowrap'>{product.brand}</td>
-                            <td className='px-6 py-4 whitespace-nowrap'>
-                                <button className='text-blue-500 hover:text-blue-500 mr-2'>Edit</button>
-                                <button className='text-red-500 hover:text-red-500'>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
                 </tbody>
             </table>
         </div>
