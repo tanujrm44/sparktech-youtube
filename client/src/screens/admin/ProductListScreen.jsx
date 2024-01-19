@@ -1,10 +1,11 @@
 import React from 'react'
-import { useGetProductsQuery } from '../../slices/productsApiSlice'
+import { useCreateProductMutation, useGetProductsQuery } from '../../slices/productsApiSlice'
 import Spinner from '../../components/Spinner'
 import { toast } from 'react-toastify'
 
 export default function ProductListScreen() {
     const { data: products, isLoading, error, refetch } = useGetProductsQuery()
+    const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation()
 
     if (isLoading) {
         return <Spinner />
@@ -14,12 +15,25 @@ export default function ProductListScreen() {
         toast.error(error?.data?.message || error?.error)
     }
 
+    const createProductHandler = async () => {
+        if (window.confirm("Are you sure you want to create a new product?")) {
+            try {
+                await createProduct()
+                refetch()
+                toast.success("Product Created")
+            } catch (error) {
+                toast.error(error?.data?.message || error?.error)
+            }
+        }
+    }
+
     return (
         <div>
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-semibold mb-4">Products</h2>
                 <button
                     className="bg-blue-500 text-white px-4 py-2 rounded-md mb-4"
+                    onClick={createProductHandler}
                 >
                     Create Product
                 </button>

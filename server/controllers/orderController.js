@@ -74,4 +74,10 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
   throw new Error("Order Not Found")
 })
 
-export { addOrderItems, getOrderById, getUserOrders, getOrders, updateOrderToDelivered }
+export {
+  addOrderItems,
+  getOrderById,
+  getUserOrders,
+  getOrders,
+  updateOrderToDelivered,
+}
