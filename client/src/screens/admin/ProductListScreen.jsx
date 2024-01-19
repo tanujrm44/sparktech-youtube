@@ -1,11 +1,13 @@
 import React from 'react'
 import { useCreateProductMutation, useGetProductsQuery } from '../../slices/productsApiSlice'
+import { useNavigate } from "react-router-dom"
 import Spinner from '../../components/Spinner'
 import { toast } from 'react-toastify'
 
 export default function ProductListScreen() {
     const { data: products, isLoading, error, refetch } = useGetProductsQuery()
     const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation()
+    const navigate = useNavigate()
 
     if (isLoading) {
         return <Spinner />
@@ -25,6 +27,10 @@ export default function ProductListScreen() {
                 toast.error(error?.data?.message || error?.error)
             }
         }
+    }
+
+    const editProductHandler = (id) => {
+        navigate(`/admin/product/${id}/edit`)
     }
 
     return (
@@ -66,7 +72,9 @@ export default function ProductListScreen() {
                             <td className='px-6 py-4 whitespace-nowrap'>${product.price}</td>
                             <td className='px-6 py-4 whitespace-nowrap'>{product.brand}</td>
                             <td className='px-6 py-4 whitespace-nowrap'>
-                                <button className='text-blue-500 hover:text-blue-500 mr-2'>Edit</button>
+                                <button className='text-blue-500 hover:text-blue-500 mr-2'
+                                    onClick={() => editProductHandler(product._id)}
+                                >Edit</button>
                                 <button className='text-red-500 hover:text-red-500'>Delete</button>
                             </td>
                         </tr>
