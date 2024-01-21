@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useUpdateProductMutation } from '../../slices/productsApiSlice'
+import { useUpdateProductMutation, useUploadFileHandlerMutation } from '../../slices/productsApiSlice'
 import { toast } from 'react-toastify'
 import { useNavigate, useParams } from 'react-router-dom'
 import Spinner from '../../components/Spinner'
@@ -7,6 +7,8 @@ import Spinner from '../../components/Spinner'
 export default function ProductEditScreen() {
     const { id: productId } = useParams()
     const [updateProduct, { isLoading: loadingupdate }, refetch] = useUpdateProductMutation()
+    const [uploadProductImage, { isLoading: uploadLoading }] = useUploadFileHandlerMutation()
+
     const navigate = useNavigate()
     const [productData, setProductData] = useState({
         name: "",
@@ -40,7 +42,21 @@ export default function ProductEditScreen() {
         } catch (error) {
             toast.error(error?.data?.message || error?.error)
         }
+    }
 
+    const uploadFileHandler = async e => {
+        const formData = new FormData()
+        formData.append('image', e.target.files[0])
+        try {
+            const res = await uploadProductImage(formData).unwrap()
+            toast.success(res.message)
+            setProductData({
+                ...productData,
+                image: res.image
+            })
+        } catch (error) {
+            toast.error(error?.data?.message || error?.error)
+        }
     }
 
     return (
@@ -81,6 +97,8 @@ export default function ProductEditScreen() {
                         type="file"
                         id="image"
                         name="image"
+                        accept='image/*'
+                        onChange={uploadFileHandler}
                         className="w-full border border-gray-300 p-2 rounded-md"
                     />
                 </div>

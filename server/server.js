@@ -1,3 +1,4 @@
+import path from "path"
 import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
@@ -9,6 +10,7 @@ import cookieParser from "cookie-parser"
 import passport from "./utils/passport.js"
 import authRoutes from "./routes/authRoutes.js"
 import orderRoutes from "./routes/orderRoutes.js"
+import uploadRoutes from "./routes/uploadRoutes.js"
 import stripe from "./utils/stripe.js"
 
 dotenv.config()
@@ -50,6 +52,10 @@ app.use("/api/products", productRoutes)
 app.use("/api/users", userRoutes)
 app.use("/auth", authRoutes)
 app.use("/api/orders", orderRoutes)
+app.use("/api/upload", uploadRoutes)
+
+const __dirname = path.resolve()
+app.use("/uploads", express.static(path.join(__dirname, "uploads")))
 
 app.use(notFound)
 app.use(errorHandler)
