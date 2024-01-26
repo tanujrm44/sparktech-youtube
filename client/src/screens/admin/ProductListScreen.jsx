@@ -1,13 +1,14 @@
 import React from 'react'
-import { useCreateProductMutation, useGetProductsQuery } from '../../slices/productsApiSlice'
+import { useCreateProductMutation, useDeleteProductMutation, useGetProductsQuery } from '../../slices/productsApiSlice'
 import { useNavigate } from "react-router-dom"
 import Spinner from '../../components/Spinner'
 import { toast } from 'react-toastify'
 
 export default function ProductListScreen() {
+    const navigate = useNavigate()
     const { data: products, isLoading, error, refetch } = useGetProductsQuery()
     const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation()
-    const navigate = useNavigate()
+    const [deleteProduct, { isLoading: loadingDelete }] = useDeleteProductMutation()
 
     if (isLoading) {
         return <Spinner />
@@ -21,8 +22,8 @@ export default function ProductListScreen() {
         if (window.confirm("Are you sure you want to create a new product?")) {
             try {
                 await createProduct()
-                refetch()
                 toast.success("Product Created")
+                refetch()
             } catch (error) {
                 toast.error(error?.data?.message || error?.error)
             }
@@ -33,6 +34,17 @@ export default function ProductListScreen() {
         navigate(`/admin/product/${id}/edit`)
     }
 
+    const deleteProductHandler = async id => {
+        if (window.confirm("Are you sure you want to delete this product?")) {
+            try {
+                const res = await deleteProduct(id)
+                refetch()
+                toast.success(res.message)
+            } catch (error) {
+                toast.error(error?.data?.message || error?.error)
+            }
+        }
+    }
     return (
         <div>
             <div className="flex items-center justify-between">
@@ -43,6 +55,7 @@ export default function ProductListScreen() {
                 >
                     Create Product
                 </button>
+                {loadingCreate && <Spinner />}
             </div>
             <table className="min-w-full divide-y divide-gray-200">
                 <thead>
@@ -75,10 +88,12 @@ export default function ProductListScreen() {
                                 <button className='text-blue-500 hover:text-blue-500 mr-2'
                                     onClick={() => editProductHandler(product._id)}
                                 >Edit</button>
-                                <button className='text-red-500 hover:text-red-500'>Delete</button>
+                                <button className='text-red-500 hover:text-red-500'
+                                    onClick={() => deleteProductHandler(product._id)}>Delete</button>
                             </td>
                         </tr>
                     ))}
+                    {loadingDelete && <Spinner />}
                 </tbody>
             </table>
         </div>

@@ -1,23 +1,26 @@
 import React, { useState } from 'react'
-import { useUpdateProductMutation, useUploadFileHandlerMutation } from '../../slices/productsApiSlice'
+import { useGetProductDetailsQuery, useUpdateProductMutation, useUploadFileHandlerMutation } from '../../slices/productsApiSlice'
 import { toast } from 'react-toastify'
 import { useNavigate, useParams } from 'react-router-dom'
 import Spinner from '../../components/Spinner'
 
 export default function ProductEditScreen() {
     const { id: productId } = useParams()
+    const { data: product, isLoading: loadingProduct, error } = useGetProductDetailsQuery(productId)
     const [updateProduct, { isLoading: loadingupdate }, refetch] = useUpdateProductMutation()
     const [uploadProductImage, { isLoading: uploadLoading }] = useUploadFileHandlerMutation()
 
+    console.log(product)
+
     const navigate = useNavigate()
     const [productData, setProductData] = useState({
-        name: "",
-        price: 0,
-        image: null,
-        brand: "",
-        category: "",
-        countInStock: 0,
-        description: ""
+        name: product?.name,
+        price: product?.price,
+        image: product?.image,
+        brand: product?.brand,
+        category: product?.category,
+        countInStock: product?.countInStock,
+        description: product?.description
     })
 
     const { name, price, image, brand, category, countInStock, description } = productData
@@ -160,7 +163,7 @@ export default function ProductEditScreen() {
                     >
                         Update Product
                     </button>
-                    {loadingupdate && <Spinner />}
+                    {uploadLoading && <Spinner />}
                 </div>
             </form>
         </div>
