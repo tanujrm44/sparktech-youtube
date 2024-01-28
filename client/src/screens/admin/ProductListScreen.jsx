@@ -85,10 +85,10 @@ export default function ProductListScreen() {
                             <td className='px-6 py-4 whitespace-nowrap'>${product.price}</td>
                             <td className='px-6 py-4 whitespace-nowrap'>{product.brand}</td>
                             <td className='px-6 py-4 whitespace-nowrap'>
-                                <button className='text-blue-500 hover:text-blue-500 mr-2'
+                                <button className='text-blue-500 hover:text-blue-700 mr-2'
                                     onClick={() => editProductHandler(product._id)}
                                 >Edit</button>
-                                <button className='text-red-500 hover:text-red-500'
+                                <button className='text-red-500 hover:text-red-700'
                                     onClick={() => deleteProductHandler(product._id)}>Delete</button>
                             </td>
                         </tr>
