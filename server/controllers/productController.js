@@ -63,7 +63,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
   if (product) {
     await Product.deleteOne({ _id: product._id })
-    res.json({ message: "Product Deleted" })
+    res.status(204).json({ message: "Product Deleted" })
   } else {
     res.status(404)
     throw new Error("Product Not Found")

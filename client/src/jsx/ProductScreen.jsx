@@ -64,12 +64,11 @@ const ProductScreen = () => {
                     >
                         Submit Review
                     </button>
-                </div>) : (
+                </div>
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold">Write a Review</h3>
                     <p className="text-gray-700">Please <Link to="/login" className="text-blue-500 hover:underline">log in</Link> to write a review.</p>
                 </div>
-                )
             </div>
         </div>
     )
