@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
-import { useGetProductDetailsQuery } from '../slices/productsApiSlice'
+import { useCreateProductMutation, useCreateReviewMutation, useGetProductDetailsQuery } from '../slices/productsApiSlice'
 import Spinner from '../components/Spinner'
 import { toast } from 'react-toastify'
 import { useDispatch } from 'react-redux'
@@ -9,16 +9,32 @@ import { addToCart } from '../slices/cartSlice'
 
 export default function ProductScreen() {
     const { id: productId } = useParams()
+    const { data: product, isLoading, error, refetch } = useGetProductDetailsQuery(productId)
+    const [createReview, { isLoading: LoadingCreateReview }] = useCreateReviewMutation()
     const [qty, setQty] = useState(1)
+    const [userComment, setUserComment] = useState("")
+    const [userRating, setUserRating] = useState(5)
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    const { data: product, isLoading, error } = useGetProductDetailsQuery(productId)
 
     const addtoCartHandler = () => {
         dispatch(addToCart({ ...product, qty }))
         navigate('/cart')
+    }
+
+    const handleCreateReview = async e => {
+        e.preventDefault()
+        try {
+            const res = await createReview({ productId, rating: userRating, comment: userComment }).unwrap()
+            refetch()
+            toast.success(res.message)
+            setUserComment("")
+
+        } catch (error) {
+            toast.error(error?.data?.message || error?.error)
+        }
     }
 
     return (
@@ -63,7 +79,61 @@ export default function ProductScreen() {
                     </div>
                 </div>
             )}
-
+            <div className="mt-8">
+                <h2 className="text-xl font-semibold">Customer Reviews</h2>
+                <div className="mt-4">
+                    <ul>
+                        {product?.reviews?.map((review, i) => (
+                            <div key={i} className="border rounded-md py-3 px-4 mb-4 shadow-sm">
+                                <div className="flex items-center">
+                                    {[...Array(review.rating).keys()].map(num => (
+                                        <span key={num} className='text-yellow-500 mr-1'>&#9733;</span>
+                                    ))}
+                                </div>
+                                <p className='text-gray-700'>{review.comment}</p>
+                                <p className='text-gray-500'>{review.name}</p>
+                            </div>
+                        ))}
+                    </ul>
+                </div>
+                <div className="mt-4">
+                    <h3 className="text-lg font-semibold">Write a Review</h3>
+                    <div className="mt-2">
+                        <label htmlFor="userReview" className="text-gray-700">Your Review:</label>
+                        <textarea
+                            id="userReview"
+                            className="bg-white border border-gray-300 p-2 rounded-md mt-2 w-full"
+                            rows="4"
+                            value={userComment}
+                            onChange={e => setUserComment(e.target.value)}
+                            placeholder="Write your review here..."
+                        />
+                    </div>
+                    <div className="mt-2">
+                        <label htmlFor="rating" className="text-gray-700 mr-2">Rating:</label>
+                        <select
+                            id="rating"
+                            className="bg-white border border-gray-300 p-2 rounded-md mt-2"
+                            value={userRating}
+                            onChange={e => setUserRating(e.target.value)}
+                        >
+                            {[1, 2, 3, 4, 5].map(r => (
+                                <option key={r} value={r}>{r} stars</option>
+                            ))}
+                        </select>
+                    </div>
+                    <button
+                        className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-blue-600"
+                        onClick={handleCreateReview}
+                    >
+                        Submit Review
+                    </button>
+                </div>
+                <div className="mt-4">
+                    <h3 className="text-lg font-semibold">Write a Review</h3>
+                    <p className="text-gray-700">Please <Link to="/login" className="text-blue-500 hover:underline">log in</Link> to write a review.</p>
+                </div>
+            </div>
         </div>
     )
 }

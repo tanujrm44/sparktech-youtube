@@ -54,7 +54,7 @@ const Header = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/logout" onClick={handleLogout}>
+                        <Link onClick={handleLogout}>
                             <FiLogOut className="mr-1" />
                             Logout
                         </Link>
