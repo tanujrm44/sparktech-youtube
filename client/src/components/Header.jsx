@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { FiShoppingCart, FiUser, FiLogOut, FiLogIn } from 'react-icons/fi'
 import { useSelector, useDispatch } from 'react-redux'
 import { FaCaretDown, FaCaretUp } from 'react-icons/fa'
@@ -10,12 +10,14 @@ import { logout } from '../slices/userSlice'
 const Header = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const { keyword: urlKeyword } = useParams()
 
     const [logoutApi] = useLogoutMutation()
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
     const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false)
+    const [keyword, setKeyword] = useState(urlKeyword || "")
 
     const { cartItems } = useSelector(state => state.cart)
     const { userInfo } = useSelector(state => state.user)
@@ -105,6 +107,16 @@ const Header = () => {
         </Link>
     )
 
+    const handleSearch = (e) => {
+        e.preventDefault()
+        if (keyword) {
+            navigate(`/search/${keyword.trim()}`)
+            setKeyword("")
+        } else {
+            navigate("/")
+        }
+    }
+
     return (
         <nav className="bg-gray-800 p-4">
             <div className="flex items-center justify-between">
@@ -116,8 +128,11 @@ const Header = () => {
                         type="text"
                         placeholder="Search"
                         className="ml-4 p-2 rounded-md bg-gray-700 text-white hidden sm:block"
+                        value={keyword}
+                        onChange={e => setKeyword(e.target.value)}
                     />
-                    <button className="bg-blue-500 text-white py-2 px-4 rounded-md hidden sm:block ml-2">
+                    <button className="bg-blue-500 text-white py-2 px-4 rounded-md hidden sm:block ml-2"
+                        onClick={handleSearch}>
                         Search
                     </button>
                 </div>
