@@ -1,14 +1,18 @@
 import React from 'react'
 import { useCreateProductMutation, useDeleteProductMutation, useGetProductsQuery } from '../../slices/productsApiSlice'
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import Spinner from '../../components/Spinner'
 import { toast } from 'react-toastify'
+import Paginate from '../../components/Paginate'
+import { useSelector } from 'react-redux'
 
 export default function ProductListScreen() {
+    const { pageNumber } = useParams()
     const navigate = useNavigate()
-    const { data: products, isLoading, error, refetch } = useGetProductsQuery()
+    const { data, isLoading, error, refetch } = useGetProductsQuery({ pageNumber })
     const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation()
     const [deleteProduct, { isLoading: loadingDelete }] = useDeleteProductMutation()
+    const { userInfo } = useSelector(state => state.user)
 
     if (isLoading) {
         return <Spinner />
@@ -78,7 +82,7 @@ export default function ProductListScreen() {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {products?.map(product => (
+                    {data?.products?.map(product => (
                         <tr key={product._id}>
                             <td className='px-6 py-4 whitespace-nowrap'>{product._id}</td>
                             <td className='px-6 py-4 whitespace-nowrap'>{product.name}</td>
@@ -96,6 +100,9 @@ export default function ProductListScreen() {
                     {loadingDelete && <Spinner />}
                 </tbody>
             </table>
+            <div className='flex justify-center mt-12'>
+                <Paginate pages={data.pages} page={data.pageNumber} isAdmin={userInfo.isAdmin} />
+            </div>
         </div>
     )
 }

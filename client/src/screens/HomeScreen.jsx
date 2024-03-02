@@ -8,12 +8,10 @@ import { BACKEND_URL } from '../constants'
 import { useDispatch } from 'react-redux'
 import { setCredentials } from '../slices/userSlice'
 import { useParams } from 'react-router-dom'
+import Paginate from '../components/Paginate'
 
 export default function HomeScreen() {
-    const { keyword } = useParams()
     const dispatch = useDispatch()
-    const { data: products, isLoading, error } = useGetProductsQuery(keyword)
-
     const getUser = async () => {
         try {
             const res = await axios.get(`${BACKEND_URL}/auth/login/success`, {
@@ -29,21 +27,27 @@ export default function HomeScreen() {
         getUser()
     }, [])
 
-    if (isLoading) {
-        return <Spinner />
-    }
+    const { keyword, pageNumber } = useParams()
 
-    if (error) {
-        toast.error(error?.data?.message || error?.error)
-    }
+    const { data, isLoading, error } = useGetProductsQuery({ keyword, pageNumber })
 
     return (
         <>
-            <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4'>
-                {products?.map((product, i) => (
-                    <Product key={i} product={product} />
-                ))}
-            </div>
+            {isLoading ? (
+                <Spinner />
+            ) : error ? (
+                toast.error(error)
+            ) : (
+                <>
+                    <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4'>
+                        {data?.products?.map((product, i) => (
+                            <Product key={i} product={product} />
+                        ))}
+                    </div>
+                    <div className='flex justify-center mt-12'>
+                        <Paginate pages={data.pages} page={data.pageNumber} keyword={keyword ? keyword : ""} />
+                    </div>
+                </>)}
         </>
     )
 }
