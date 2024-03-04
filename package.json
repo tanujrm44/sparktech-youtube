@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\" ",
-    "client": "npm run dev --prefix client",
     "start": "node server/server.js",
-    "server": "nodemon server/server",
+    "server": "nodemon server/server.js",
+    "client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "node server/seeder",
     "data:destroy": "node server/seeder -d",
     "build": "npm install && npm install --prefix client && npm run build --prefix client"
