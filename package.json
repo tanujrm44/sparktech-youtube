@@ -10,9 +10,8 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "node server/seeder",
     "data:destroy": "node server/seeder -d",
-    "build": "npm install && npm run build-server && npm run build-client",
-    "build-client": "npm install --prefix client && npm run build --prefix client",
-    "build-server": "npm run build"
+    "build": "npm install && npm run build-client",
+    "build-client": "npm install --prefix client && npm run build --prefix client"
   },
   "keywords": [],
   "author": "",
