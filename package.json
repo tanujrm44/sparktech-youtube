@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\" ",
+    "dev": "concurrently \"npm run client\" \"npm start\" ",
     "client": "npm run dev --prefix client",
     "start": "node server/server.js",
     "server": "nodemon server/server",
