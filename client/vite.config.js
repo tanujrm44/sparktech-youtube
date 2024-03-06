@@ -7,8 +7,8 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      "/api": "http://localhost:5000",
-      "/upload": "http://localhost:5000",
+      "/api": "https://sparktech-ecommerce-youtube.onrender.com",
+      "/upload": "https://sparktech-ecommerce-youtube.onrender.com",
     },
   },
 })
